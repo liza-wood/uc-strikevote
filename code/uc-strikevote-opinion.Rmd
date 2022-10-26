@@ -1,0 +1,237 @@
+---
+title: "Opinion: UC Strike Action Vote"
+author: "Liza Wood"
+date: "2022-10-26"
+output: html_document
+---
+
+```{r, echo = F, warning = F}
+library(tidyverse)
+library(stringr)
+knitr::opts_chunk$set(
+  echo = FALSE, warning = F, fig.width = 6, error = F)
+```
+
+## UC Strike Action Vote: Oct 26-Nov 1  
+
+UC students are voting on whether they want to strike this week. The strike is driven by many years running of incremental bargaining for improved cost of living and rights for all types of student-related UC employment, from junior specialists and GSRs, to TAs and post-docs. The main point of the strike that interests me is the [proposed cost of living adjustments)](https://www.fairucnow.org/cola/). I can attest to the general sentiment that graduate students feel over-worked, underpaid, and constantly battling administrative and bureaucratic hurdles to ensure their employment every 12 weeks. But at the same time, the UC bargaining team has proposed a pretty radical number for fair wages for all 'Grad Workers' (GSRs and TAs): $54,000 as a minimum salary, assuming that graduate students are working 50% year-round. 
+
+The Union's proposal of $54,000 for 50% sounds high, and it is. But my first questions are about trying to understand how high this really is, relative to student salaries, and how this compared to other graduate student salaries.  
+
+Note: This dive into cost of living is based primarily on on UC Davis data, and no other UC campus. I recognize that Davis is among the UC campuses with the lowest cost of living and so these analyses do not speak to all of the campuses.  
+
+## How much money do UC Davis graduate students make?  
+
+The UAW website says that the 'most common' salary is $23,247, citing UCDP. I assume this is [UC Data Portal](https://data.ucop.edu/), but it is not clear how to access this, when the data is from, and how that was calculated. So instead I took data from the [UCD Grad Studies Pay Scale document](https://ucdavis.app.box.com/v/salaryscale2122) that comes out annually (this one is old because, well, still bargaining). Here we have a flat TA rate of \$46,493, which is a 9-month rate at 100%, calculating out to \$2,582.95 each month TAing at 50%. There are also GSR rates, which has default steps for a compensation plan, whereby Step III is the initial appointment -- so I will consider this a GSR minimum. The Step III GSR rate is \$52,604 at a 12-month rate, calculating out to \$2,191.84 each month GSRing at 50%.  
+
+Using these data, I consider the _minumum_ graduate student income to be some mix of these two employment methods, where a student working year-round at 50% with a 50/50 mix of these appointments is $28,648.62. This is a pretty big departure from UAW's estimate, especially considering this is my minimum compared to what sounds like their idea of average (my calculated average is \$29,621). But so, we'll proceed with my estimated minimum because it matches with the metrics I use for understanding other university pay rates.  
+
+## How does UC Davis pay compare to other graduate programs?  
+
+It is important to know your worth on the market. Graduate students generally know that pay is low, but how low is too low? What is a competitive asking price? One way to answer this question is compare UC Davis to other graduate pay rates across the country.   
+
+I selected a handful of other universities that feel comparable to UC Davis, and that have some overlap with my work in environmental policy. They feel comparable in that they are large public universities from various locations across the country, capturing a range of living costs. And ss a member of the Environmental Science and Policy Department, I wanted to know how graduate students are paid in schools that have comparable Environmental Science/Environmental Policy programs. I settled on the following universities, with their details below:  
+
+```{r}
+uni_comp <- data.frame("University" = df$university,
+                       "Undergrad #" = c(31162, 32779, 37874, 
+                                         31329, 40118, 34253, 38528),
+                       "Postgrad #" = c(8869, 16246, 15916, 16578, 
+                                        9952, 11075, 10943))
+DT::datatable(uni_comp)
+```
+
+I grabbed reported pay rates for graduate students from each of these schools. The details of where I found and collated these data can be found annotated in my grad-pay-rate script.
+
+Let's get these all to scale and see how they measure up in absolute terms.  
+
+```{r}
+df <- read.csv("data/grad_student_pay.csv") %>% 
+  left_join(read.csv("data/cost_of_living.csv")) %>% 
+  mutate(min_annual_100FTE = round(min_annual_100FTE),
+         min_annual_50FTE = round(min_annual_50FTE),
+         avg_annual_100FTE = round(avg_annual_100FTE),
+         avg_annual_50FTE = round(avg_annual_50FTE),
+         grad100FTE_to_median_income = round(min_annual_100FTE/per_capita_income, 2),
+         grad50FTE_to_median_income = round(min_annual_50FTE/per_capita_income, 2),
+         postdoc_to_median_income = round(postdoc_annual/per_capita_income, 2),
+         grad100FTE_to_living_wage = round(min_annual_100FTE/living_wage_income, 2),
+         grad50FTE_to_living_wage = round(min_annual_50FTE/living_wage_income, 2),
+         postdoc_to_living_wage = round(postdoc_annual/living_wage_income, 2))
+```
+
+```{r}
+boxPlot_dollars_function <- function(fte50, fte100, title){
+  df %>% 
+  rbind(df) %>% 
+  mutate(text50 = paste('$',formatC({{fte50}}, big.mark=',', 
+                                                     format = 'f', drop0trailing = T)),
+         text100 = paste('$',formatC({{fte100}}, big.mark=',', 
+                                                      format = 'f', drop0trailing = T))) %>% 
+  select(university,{{fte100}}, {{fte50}},
+         text100, text50) %>% 
+  mutate(FTE50 = factor(rep.int(c("50%", "100%"), nrow(.)/2))) %>% 
+  arrange({{fte50}}) %>% 
+  mutate(text = ifelse(FTE50 == "100%", text100, text50)) %>% 
+  mutate(university = factor(university, levels = unique(.$university))) %>% 
+  ggplot() +
+  aes(x = university, y = {{fte50}}, fill = FTE50) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c("lightblue", "darkblue")) +
+  stat_identity(geom = "text", colour = "white", size = 2,
+                aes(label = text),
+                position=position_stack(vjust=0.5)) +
+  theme_linedraw() +
+  labs(y = "", x = "", fill = "FTE",
+       title = title,
+       caption = "*Assumes 50% work year-round, even mix of TA-GSR if different pay rates")
+}
+```
+
+```{r}
+boxPlot_dollars_function(min_annual_50FTE, min_annual_100FTE, 
+                 "Minimum graduate student annual pay*")
+```
+
+
+# How does this compare to cost of living in their city?  
+
+```{r}
+boxPlot_perc_function <- function(fte50, fte100, title){
+  df %>% 
+  rbind(df) %>% 
+  select(university,{{fte100}}, {{fte50}}) %>% 
+  mutate(FTE50 = factor(rep.int(c("100%", "50%"), nrow(.)/2))) %>% 
+  arrange({{fte50}}) %>% 
+  mutate(text = ifelse(FTE50 == "100%", {{fte100}}, {{fte50}})) %>% 
+  mutate(university = factor(university, levels = unique(.$university))) %>% 
+  ggplot() +
+  aes(x = university, y = {{fte50}}, fill = FTE50) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c("lightblue", "darkblue")) +
+  stat_identity(geom = "text", colour = "white", size = 2,
+                aes(label = text),
+                position=position_stack(vjust=0.5)) +
+  theme_linedraw() +
+  labs(y = "", x = "", fill = "FTE",
+       title = title,
+       caption = "*Assumes 50% work year-round, even mix of TA-GSR if different pay rates")
+}
+```
+
+```{r}
+boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
+                 "Income as a proportion of living wage*")
+```
+
+# So what what does this mean in the context of the Union demands?  
+
+The UC's proposal is for a 7% raise increase -- this gets students to earning 
+```{r}
+ucd_current_pay <- df$min_annual_50FTE[df$university == "University of California, Davis"]
+davis_living_wage <- df$living_wage_income[df$university == "University of California, Davis"]
+(ucd_current_pay + (ucd_current_pay*.07))/davis_living_wage
+```
+
+The Union's proposal is to set an ambitious new minimum of $54,000. 
+```{r}
+54000/ucd_current_pay
+```
+
+```{r}
+uc_campus_livingwage <- data.frame(
+ "campus" = c("Berkeley", "Santa Barbara", "Los Angeles", "San Diego",
+  "Riverside", "Merced", "Irvine", "Santa Cruz", "Davis"),
+ living_wage = c(53149, 52675, 45536, 47304,
+  38821, 34219, 51843, 54571, 40930)
+# Berkeley is SF/Oakland area
+)
+uc_campus_livingwage$living_wage_88 = uc_campus_livingwage$living_wage*88
+```
+
+I think what is competitive is 88% of living wage
+
+```{r}
+
+```
+
+
+```{r}
+summary(uc_campus_livingwage$living_wage)
+```
+
+
+```{r}
+DT::datatable(uc_campus_livingwage)
+```
+
+```{r}
+summary(uc_campus_livingwage$living_wage_88)
+```
+
+```{r}
+df <- df %>%
+  mutate(min_annual_50FTE = case_when(
+    university == "University of California, Davis" ~ 54000,
+    T ~ min_annual_50FTE),
+        min_annual_100FTE = min_annual_50FTE*2) %>% 
+  mutate(min_annual_100FTE = round(min_annual_100FTE),
+         min_annual_50FTE = round(min_annual_50FTE),
+         avg_annual_100FTE = round(avg_annual_100FTE),
+         avg_annual_50FTE = round(avg_annual_50FTE),
+         grad100FTE_to_median_income = round(min_annual_100FTE/per_capita_income, 2),
+         grad50FTE_to_median_income = round(min_annual_50FTE/per_capita_income, 2),
+         postdoc_to_median_income = round(postdoc_annual/per_capita_income, 2),
+         grad100FTE_to_living_wage = round(min_annual_100FTE/living_wage_income, 2),
+         grad50FTE_to_living_wage = round(min_annual_50FTE/living_wage_income, 2),
+         postdoc_to_living_wage = round(postdoc_annual/living_wage_income, 2))
+```
+
+```{r}
+boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
+                 "Minimum graduate student annual pay*")
+```
+
+```{r}
+df <- df %>%
+  mutate(min_annual_50FTE = case_when(
+    university == "University of California, Davis" ~ 41000,
+    T ~ min_annual_50FTE),
+        min_annual_100FTE = min_annual_50FTE*2) %>% 
+  mutate(min_annual_100FTE = round(min_annual_100FTE),
+         min_annual_50FTE = round(min_annual_50FTE),
+         avg_annual_100FTE = round(avg_annual_100FTE),
+         avg_annual_50FTE = round(avg_annual_50FTE),
+         grad100FTE_to_median_income = round(min_annual_100FTE/per_capita_income, 2),
+         grad50FTE_to_median_income = round(min_annual_50FTE/per_capita_income, 2),
+         postdoc_to_median_income = round(postdoc_annual/per_capita_income, 2),
+         grad100FTE_to_living_wage = round(min_annual_100FTE/living_wage_income, 2),
+         grad50FTE_to_living_wage = round(min_annual_50FTE/living_wage_income, 2),
+         postdoc_to_living_wage = round(postdoc_annual/living_wage_income, 2))
+```
+
+```{r}
+boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
+                 "Minimum graduate student annual pay*")
+```
+
+What does this shake out to, as a percentage riase?
+
+```{r}
+41000/ucd_current_pay
+```
+Right smack in the middle of our bargain: UC offers 7%, we propose 88% and well, we're right at a long overdue 40% raise.
+
+
+# Where should this money come from?  
+
+We don't know, but we do know that other schools make graduate students more a priority. * This is not simply because they have more money. Comparable students, revenue
+* 
+How much does a grad student make compared to their chancellor...
+```{r}
+
+```
+
+How much does a grad student make compared to their faculty?
