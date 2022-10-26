@@ -55,7 +55,10 @@ uni_comp <- data.frame("University" = df$university,
                                          31329, 40118, 34253, 38528),
                        "Postgrad #" = c(8869, 16246, 15916, 16578, 
                                         9952, 11075, 10943))
-DT::datatable(uni_comp)
+```
+
+```{r, results = T, message = T, echo = T}
+DT::datatable(uni_comp, rownames = F)
 ```
 
 I grabbed reported pay rates for graduate students from each of these schools. The details of where I found and collated these data can be found annotated in my [grad-pay-rate script](https://github.com/liza-wood/uc-strikevote/blob/main/code/grad-student-pay.R). Good news is: other school policies appear much less confusing than UCD's. They tend to set a clear minimum and may only have a few employment categories with different pay grades. But because the minimum was most often reported, I'll still with using the _minimum_/floor pay for these graduate programs when comparing pay scales.  
@@ -105,7 +108,7 @@ So, in absolute terms, grad students are not making as much, at the minimum, com
 
 How to measure cost of living in a city is not easy. UAW seems to be relying on union member surveys to gather data on how much rent costs are for graduate students, which they use as the basis to discuss rent burden. But luckily, there is a tool for a well-documented understanding of living wages provided through the [MIT's Living Wage Calculator](https://livingwage.mit.edu/). And just for fun, I added in the UC Census Bureau's median income per capita (2016-2020) for each city.  
 
-```{r}
+```{r, results = T, message = T}
 read.csv("data/cost_of_living.csv") %>% 
     mutate(living_wage_income = paste('$',formatC(living_wage_income, big.mark=',', 
                                                      format = 'f', drop0trailing = T)),
@@ -116,7 +119,7 @@ read.csv("data/cost_of_living.csv") %>%
          "MIT Living Wage" = living_wage_income,
          "US Census median income (2016-20)" = per_capita_income) %>% 
   select(University, City, `MIT Living Wage`, `US Census median income (2016-20)`) %>% 
-  DT::datatable(.)
+  DT::datatable(., rownames = F)
 ```
 
 A discrepancy here suggests UAW may be over estimating the rent burden, given that MIT estimates that housing costs under living wages are \$1,174/month in Davis, while UAW estimates somewhere between \$1,131-\$1,643.  
