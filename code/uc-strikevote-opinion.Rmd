@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 UC students are voting on whether they want to strike this week. The strike is driven by many years running of incremental bargaining for improved cost of living and rights for all types of student-related UC employment, from junior specialists and GSRs, to TAs and post-docs. The main point of the strike that interests me is the [proposed cost of living adjustments](https://www.fairucnow.org/cola/). I can attest to the general sentiment that graduate students feel over-worked, underpaid, and constantly battling administrative and bureaucratic hurdles to ensure their employment every 12 weeks. But at the same time, the UC bargaining team has proposed a pretty radical number for fair wages for all 'Grad Workers' (GSRs and TAs): $54,000 as a minimum salary, assuming that graduate students are working 50% year-round. 
 
-The Union's proposal of $54,000 for 50% sounds high, and it is. But my first questions are about trying to understand how high this really is, relative to student salaries, and how this compared to other graduate student salaries.  
+The Union's proposal of $54,000 for 50% sounds high, and it is. But my first questions are about trying to understand how high this really is, relative to current student salaries, and how this compares to other graduate student salaries.  
 
 Note: This dive into cost of living is based primarily on on UC Davis data, and no other UC campus. I recognize that Davis is among the UC campuses with the lowest cost of living and so these analyses do not speak to all of the campuses.  
 
@@ -51,13 +51,18 @@ df <- read.csv("data/grad_student_pay.csv") %>%
 
 ```{r}
 uni_comp <- data.frame("University" = df$university,
-                       "Undergrad #" = c(31162, 32779, 37874, 
+                       "UndergradN" = c(31162, 32779, 37874, 
                                          31329, 40118, 34253, 38528),
-                       "Postgrad #" = c(8869, 16246, 15916, 16578, 
-                                        9952, 11075, 10943))
+                       "PostgradN" = c(8869, 16246, 15916, 16578, 
+                                        9952, 11075, 10943)) %>% 
+    mutate("Undergrad #" = formatC(UndergradN, big.mark=',', 
+                                                     format = 'f', drop0trailing = T),
+         "Postgrad #" = formatC(PostgradN, big.mark=',', 
+                                                      format = 'f', drop0trailing = T)) %>% 
+  select(-UndergradN, -PostgradN) 
 ```
 
-```{r, results = "asis", message = T}
+```{r}
 DT::datatable(uni_comp, rownames = F)
 ```
 
@@ -85,7 +90,7 @@ boxPlot_dollars_function <- function(fte50, fte100, title){
   geom_col() +
   coord_flip() +
   scale_fill_manual(values = c("lightblue", "darkblue")) +
-  stat_identity(geom = "text", colour = "white", size = 2,
+  stat_identity(geom = "text", colour = "white", size = 4,
                 aes(label = text),
                 position=position_stack(vjust=0.5)) +
   theme_linedraw() +
@@ -99,26 +104,27 @@ boxPlot_dollars_function <- function(fte50, fte100, title){
 
 ```{r}
 boxPlot_dollars_function(min_annual_50FTE, min_annual_100FTE, 
-                 "Minimum graduate student annual pay*")
+                 "Current minimum graduate student annual pay*")
 ```
 
 So, in absolute terms, grad students are not making as much, at the minimum, compared to other comparable universities, even in cities that may be less expensive. But this point is important: how does this pay relate to the financial demands of the location. This is what I explore next.  
 
 ## How does UCD pay compare to other program given the cost of living in each city?  
 
-How to measure cost of living in a city is not easy. UAW seems to be relying on union member surveys to gather data on how much rent costs are for graduate students, which they use as the basis to discuss rent burden. But luckily, there is a tool for a well-documented understanding of living wages provided through the [MIT's Living Wage Calculator](https://livingwage.mit.edu/). And just for fun, I added in the UC Census Bureau's median income per capita (2016-2020) for each city.  
+How to measure cost of living in a city is not easy. UAW seems to be relying on union member surveys to gather data on how much rent costs are for graduate students, which they use as the basis to discuss rent burden. But luckily, there is a tool for a well-documented understanding of living wages provided through the [MIT's Living Wage Calculator](https://livingwage.mit.edu/). 
 
 ```{r, results = T, message = T, results = "asis"}
 read.csv("data/cost_of_living.csv") %>% 
+  select(-per_capita_income) %>% 
     mutate(living_wage_income = paste('$',formatC(living_wage_income, big.mark=',', 
-                                                     format = 'f', drop0trailing = T)),
-         per_capita_income = paste('$',formatC(per_capita_income, big.mark=',', 
-                                                      format = 'f', drop0trailing = T))) %>% 
+                                                     format = 'f', drop0trailing = T))) %>% #,
+         #per_capita_income = paste('$',formatC(per_capita_income, big.mark=',', 
+                                                      #format = 'f', drop0trailing = T))) %>% 
   rename("University" = university,
          "City" = city,
-         "MIT Living Wage" = living_wage_income,
-         "US Census median income (2016-20)" = per_capita_income) %>% 
-  select(University, City, `MIT Living Wage`, `US Census median income (2016-20)`) %>% 
+         "MIT Living Wage" = living_wage_income) %>% 
+         #"US Census median income (2016-20)" = per_capita_income) %>% 
+  select(University, City, `MIT Living Wage`) %>% # `US Census median income (2016-20)`
   DT::datatable(., rownames = F)
 ```
 
@@ -140,7 +146,7 @@ boxPlot_perc_function <- function(fte50, fte100, title){
   geom_col() +
   coord_flip() +
   scale_fill_manual(values = c("lightblue", "darkblue")) +
-  stat_identity(geom = "text", colour = "white", size = 2,
+  stat_identity(geom = "text", colour = "white", size = 4,
                 aes(label = text),
                 position=position_stack(vjust=0.5)) +
   theme_linedraw() +
@@ -152,7 +158,7 @@ boxPlot_perc_function <- function(fte50, fte100, title){
 
 ```{r}
 boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
-                 "Income as a proportion of living wage*")
+                 "Current ncome as a proportion of living wage*")
 ```
 
 Once adjusting for the cost of living, UCD compares poorly to its peers. The average proportion of the living wage covered by 50% employment (at the minimum rate) by the six other schools in these data is .82, which is a whole 12% higher than Davis's proportion of .7. If I have time to include other UC's here, I will, considering that the cost of living in these places is much higher. So, despite being harsh on the Union's data transparency, it is clear:
@@ -169,6 +175,7 @@ div.white { background-color:#FFFFFF; border-radius: 5px; padding: 20px;}
 
 </div>
 </div>
+<br>
 
 ## How do Union demands map onto to national grad pay norms?  
 
@@ -233,8 +240,8 @@ uc_campus_wageDT <- uc_campus_livingwage %>%
          "Living wage" = living_wage_dollar)
 ```
 
-```{r, ech = T, results = T, message = T}
-DT::datatable(uc_campus_wageDT)
+```{r}
+DT::datatable(uc_campus_wageDT, rownames = F)
 ```
 
 So of course the relationship to living wage differs. At UC's highest-cost campus, Santa Cruz, this minimum is right around the living wage. But **based on data from comparable universities, it seems like 90%  of a city's living wage is a competitive ask**. So what does that more realistic ask -- 90% of living wage based on the median living wage across UC campuses -- look like?  
@@ -283,6 +290,8 @@ So, here's my take: UC proposes as 7% raise, UAW is asking for an 88% raise, and
 
 </div>
 </div>
+</div>
+<br>
 
 ```{r, results = F}
 41628/ucd_current_pay
