@@ -20,6 +20,8 @@ The Union's proposal of $54,000 for 50% sounds high, and it is. But my first que
 
 Note: This dive into cost of living is based primarily on on UC Davis data, and no other UC campus. I recognize that Davis is among the UC campuses with the lowest cost of living and so these analyses do not speak to all of the campuses.  
 
+Want to dig into these numbrs yourself? All data and analyses can be found here: https://github.com/liza-wood/uc-strikevote  
+
 ## How much money do UC Davis graduate students make?  
 
 The UAW website says that the 'most common' salary is $23,247, citing UCDP. I assume this is [UC Data Portal](https://data.ucop.edu/), but it is not clear how to access this, when the data is from, and how that was calculated. So instead I took data from the [UCD Grad Studies Pay Scale document](https://ucdavis.app.box.com/v/salaryscale2122) that comes out annually (this one is old because, well, still bargaining). Here we have a flat TA rate of \$46,493, which is a 9-month rate at 100%, calculating out to \$2,582.95 each month TAing at 50%. There are also GSR rates, which has default steps for a compensation plan, whereby Step III is the initial appointment -- so I will consider this a GSR minimum. The Step III GSR rate is \$52,604 at a 12-month rate, calculating out to \$2,191.84 each month GSRing at 50%.  
