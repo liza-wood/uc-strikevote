@@ -215,10 +215,10 @@ uc_campus_livingwage <- data.frame(
 # Berkeley is SF/Oakland area
 ) %>% 
   mutate(
-    living_wage_88 = living_wage*.88) %>% 
+    living_wage_90 = living_wage*.9) %>% 
   mutate(living_wage_dollar = paste('$',formatC(living_wage, big.mark=',', 
                                                      format = 'f', drop0trailing = T)),
-         living_wage_88_dollar = paste('$',formatC(living_wage_88, big.mark=',', 
+         living_wage_90_dollar = paste('$',formatC(living_wage_90, big.mark=',', 
                                                      format = 'f', drop0trailing = T)),
   )
 
@@ -236,17 +236,18 @@ So of course the relationship to living wage differs. At UC's highest-cost campu
 
 ```{r, results = F}
 summary(uc_campus_livingwage$living_wage)
-summary(uc_campus_livingwage$living_wage_88)
-41628/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Davis"])
-41628/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Santa Cruz"])
+summary(uc_campus_livingwage$living_wage_90)
+median <- summary(uc_campus_livingwage$living_wage_90)[[3]]
+median/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Davis"])
+median/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Santa Cruz"])
 ```
 
-The values from across MIT's Living Wage Calculator estimates that the median cost of living across the 9 campuses is \$47,304, and 88% of that is \$41,628. How does this value then map onto our cross-university comparison, for UC Davis? This puts UCD in a very competitive situation at right about the living wage, but leaves somewhere like Santa Cruz still around the average pay rate relative to living wage, right around .76 of living wage.  
+The values from across MIT's Living Wage Calculator estimates that the median cost of living across the 9 campuses is \$47,304, and 90% of that is \$42,573. How does this value then map onto our cross-university comparison, for UC Davis? This puts UCD in a very competitive situation at right about 5% above living, but leaves somewhere like Santa Cruz still around the average pay rate relative to living wage, right around 78% of living wage.  
 
 ```{r}
 df <- df %>%
   mutate(min_annual_50FTE = case_when(
-    university == "University of California, Davis" ~ 41628,
+    university == "University of California, Davis" ~ median,
     T ~ min_annual_50FTE),
         min_annual_100FTE = min_annual_50FTE*2) %>% 
   mutate(min_annual_100FTE = round(min_annual_100FTE),
@@ -263,7 +264,7 @@ df <- df %>%
 
 ```{r}
 boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
-                 "Re-analysis: .88 of median living wage across UC campuses compared to universities*")
+                 "Re-analysis: .90 of median living wage across UC campuses compared to universities*")
 ```
 
 ## Re-anlalysis in the context of barganing  
