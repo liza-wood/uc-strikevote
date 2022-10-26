@@ -57,7 +57,7 @@ uni_comp <- data.frame("University" = df$university,
                                         9952, 11075, 10943))
 ```
 
-```{r, results = T, message = T, echo = T}
+```{r, results = "asis", message = T}
 DT::datatable(uni_comp, rownames = F)
 ```
 
@@ -108,7 +108,7 @@ So, in absolute terms, grad students are not making as much, at the minimum, com
 
 How to measure cost of living in a city is not easy. UAW seems to be relying on union member surveys to gather data on how much rent costs are for graduate students, which they use as the basis to discuss rent burden. But luckily, there is a tool for a well-documented understanding of living wages provided through the [MIT's Living Wage Calculator](https://livingwage.mit.edu/). And just for fun, I added in the UC Census Bureau's median income per capita (2016-2020) for each city.  
 
-```{r, results = T, message = T}
+```{r, results = T, message = T, results = "asis"}
 read.csv("data/cost_of_living.csv") %>% 
     mutate(living_wage_income = paste('$',formatC(living_wage_income, big.mark=',', 
                                                      format = 'f', drop0trailing = T)),
