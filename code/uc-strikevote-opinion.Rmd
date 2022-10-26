@@ -160,7 +160,7 @@ div.white { background-color:#FFFFFF; border-radius: 5px; padding: 20px;}
 <div class = "color">
 <div class = "row">
 <div class = "col-md-4">
-<center>**UC lags behind graduate programs across the country and needs to take considerable action to step up.**</center>
+**UC lags behind graduate programs across the country and needs to take considerable action to step up.**
 </div>
 </div>
 </div>
@@ -273,7 +273,7 @@ So, here's my take: UC proposes as 7% raise, UAW is asking for an 88% raise, and
 <div class = "color">
 <div class = "row">
 <div class = "col-md-4">
-<center>tl;dr I will strike to increase bargaining power in the hopes that we can agree to a reasonable middle-ground, making the UC a system with competitive university pay. If we agree to a fixed value across the UC, Davis will benefit more than others, and places like Santa Cruz will still be on the tail end of pay to living wage spectrum.</center>
+**tl;dr I will strike to increase bargaining power in the hopes that we can agree to a reasonable middle-ground, making the UC a system with competitive university pay. If we agree to a fixed value across the UC, Davis will benefit more than others, and places like Santa Cruz will still be on the tail end of pay to living wage spectrum.**
 </div>
 </div>
 </div>
