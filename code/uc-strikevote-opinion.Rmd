@@ -5,11 +5,11 @@ date: "2022-10-26"
 output: html_document
 ---
 
-```{r, echo = F, warning = F}
+```{r, echo = F, warning = F, message = F}
 library(tidyverse)
 library(stringr)
 knitr::opts_chunk$set(
-  echo = FALSE, warning = F, fig.width = 6, error = F)
+  echo = FALSE, warning = F, out.width = "75%", error = F, message = F)
 ```
 
 ## UC Strike Action Vote: Oct 26-Nov 1  
@@ -33,19 +33,6 @@ It is important to know your worth on the market. Graduate students generally kn
 I selected a handful of other universities that feel comparable to UC Davis, and that have some overlap with my work in environmental policy. They feel comparable in that they are large public universities from various locations across the country, capturing a range of living costs. And ss a member of the Environmental Science and Policy Department, I wanted to know how graduate students are paid in schools that have comparable Environmental Science/Environmental Policy programs. I settled on the following universities, with their details below:  
 
 ```{r}
-uni_comp <- data.frame("University" = df$university,
-                       "Undergrad #" = c(31162, 32779, 37874, 
-                                         31329, 40118, 34253, 38528),
-                       "Postgrad #" = c(8869, 16246, 15916, 16578, 
-                                        9952, 11075, 10943))
-DT::datatable(uni_comp)
-```
-
-I grabbed reported pay rates for graduate students from each of these schools. The details of where I found and collated these data can be found annotated in my grad-pay-rate script.
-
-Let's get these all to scale and see how they measure up in absolute terms.  
-
-```{r}
 df <- read.csv("data/grad_student_pay.csv") %>% 
   left_join(read.csv("data/cost_of_living.csv")) %>% 
   mutate(min_annual_100FTE = round(min_annual_100FTE),
@@ -59,6 +46,20 @@ df <- read.csv("data/grad_student_pay.csv") %>%
          grad50FTE_to_living_wage = round(min_annual_50FTE/living_wage_income, 2),
          postdoc_to_living_wage = round(postdoc_annual/living_wage_income, 2))
 ```
+
+```{r}
+uni_comp <- data.frame("University" = df$university,
+                       "Undergrad #" = c(31162, 32779, 37874, 
+                                         31329, 40118, 34253, 38528),
+                       "Postgrad #" = c(8869, 16246, 15916, 16578, 
+                                        9952, 11075, 10943))
+DT::datatable(uni_comp)
+```
+
+I grabbed reported pay rates for graduate students from each of these schools. The details of where I found and collated these data can be found annotated in my [grad-pay-rate script](https://github.com/liza-wood/uc-strikevote/blob/main/code/grad-student-pay.R). Good news is: other school policies appear much less confusing than UCD's. They tend to set a clear minimum and may only have a few employment categories with different pay grades. But because the minimum was most often reported, I'll still with using the _minimum_/floor pay for these graduate programs when comparing pay scales.  
+
+Let's first see how UCD grad student pay measures up in absolute terms.  
+
 
 ```{r}
 boxPlot_dollars_function <- function(fte50, fte100, title){
@@ -85,7 +86,9 @@ boxPlot_dollars_function <- function(fte50, fte100, title){
   theme_linedraw() +
   labs(y = "", x = "", fill = "FTE",
        title = title,
-       caption = "*Assumes 50% work year-round, even mix of TA-GSR if different pay rates")
+       caption = "*Assumes 50% work year-round, even mix of TA-GSR if different pay rates") #+
+   #scale_y_discrete(breaks=c(0, 20000, 40000, 60000),
+   #                 labels=c("$0", "$2,000", "$4,000", "$6,000"))
 }
 ```
 
@@ -94,8 +97,29 @@ boxPlot_dollars_function(min_annual_50FTE, min_annual_100FTE,
                  "Minimum graduate student annual pay*")
 ```
 
+So, in absolute terms, grad students are not making as much, at the minimum, compared to other comparable universities, even in cities that may be less expensive. But this point is important: how does this pay relate to the financial demands of the location. This is what I explore next.  
 
-# How does this compare to cost of living in their city?  
+## How does UCD pay compare to other program given the cost of living in each city?  
+
+How to measure cost of living in a city is not easy. UAW seems to be relying on union member surveys to gather data on how much rent costs are for graduate students, which they use as the basis to discuss rent burden. But luckily, there is a tool for a well-documented understanding of living wages provided through the [MIT's Living Wage Calculator](https://livingwage.mit.edu/). And just for fun, I added in the UC Census Bureau's median income per capita (2016-2020) for each city.  
+
+```{r}
+read.csv("data/cost_of_living.csv") %>% 
+    mutate(living_wage_income = paste('$',formatC(living_wage_income, big.mark=',', 
+                                                     format = 'f', drop0trailing = T)),
+         per_capita_income = paste('$',formatC(per_capita_income, big.mark=',', 
+                                                      format = 'f', drop0trailing = T))) %>% 
+  rename("University" = university,
+         "City" = city,
+         "MIT Living Wage" = living_wage_income,
+         "US Census median income (2016-20)" = per_capita_income) %>% 
+  select(University, City, `MIT Living Wage`, `US Census median income (2016-20)`) %>% 
+  DT::datatable(.)
+```
+
+A discrepancy here suggests UAW may be over estimating the rent burden, given that MIT estimates that housing costs under living wages are \$1,174/month in Davis, while UAW estimates somewhere between \$1,131-\$1,643.  
+
+But anyways, let's take a look at what the minimum graduate student pay is, as a proportion of the area's living wage.  
 
 ```{r}
 boxPlot_perc_function <- function(fte50, fte100, title){
@@ -126,16 +150,32 @@ boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage,
                  "Income as a proportion of living wage*")
 ```
 
-# So what what does this mean in the context of the Union demands?  
+Once adjusting for the cost of living, UCD compares poorly to its peers. The average proportion of the living wage covered by 50% employment (at the minimum rate) by the six other schools in these data is .82, which is a whole 12% higher than Davis's proportion of .7. If I have time to include other UC's here, I will, considering that the cost of living in these places is much higher. So, despite being harsh on the Union's data transparency, it is clear:
 
-The UC's proposal is for a 7% raise increase -- this gets students to earning 
-```{r}
+<style>
+div.color { background-color:#E6E0F8; border-radius: 5px; padding: 20px;}
+div.white { background-color:#FFFFFF; border-radius: 5px; padding: 20px;}
+</style>
+
+<div class = "color">
+<div class = "row">
+<div class = "col-md-4">
+**UC lags behind graduate programs across the country and needs to take considerable action to step up.**  
+</div>
+</div>
+</div>
+
+## How do Union demands map onto to national grad pay norms?  
+
+**The UC's current proposal** -- which has been rejected by the Union -- is for a 7% raise increase. This kind of raise would bring the minimum from \$28,622 to \$30,625.54. This might sound exciting, but let's note that 3% of that is a standard inflation increase and the remaining 4% still does not cover the rate of inflation that we've endured in 2022. And in the context of living wages, this still leaves Davis far below average compared to its peers, with minimum workers earning only .75 of the living wage.  
+
+```{r, results = F}
 ucd_current_pay <- df$min_annual_50FTE[df$university == "University of California, Davis"]
 davis_living_wage <- df$living_wage_income[df$university == "University of California, Davis"]
 (ucd_current_pay + (ucd_current_pay*.07))/davis_living_wage
 ```
 
-The Union's proposal is to set an ambitious new minimum of $54,000. 
+Instead, **UAW's proposal** is to set an ambitious new minimum of $54,000 at 50% FTE. 
 ```{r}
 54000/ucd_current_pay
 ```

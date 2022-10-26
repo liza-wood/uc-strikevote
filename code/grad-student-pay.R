@@ -1,9 +1,10 @@
+# This script compiles data from different university webpages to create a grad student pay spreadsheet.
+
 library(tidyverse)
 # CALIFORNIA ----
 ## Data source ----
 # GA/TA/postdoc: https://ucdavis.app.box.com/v/salaryscale2122
 # Notes: Reported monthly at 100% FTE; postdoc minimum
-
 
 ## Populating data ----
 uni <- "University of California, Davis"
