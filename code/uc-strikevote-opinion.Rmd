@@ -1,7 +1,7 @@
 ---
 title: "Opinion: UC Strike Action Vote"
 author: "Liza Wood"
-date: "2022-10-26"
+date: "October 26, 2022"
 output: html_document
 ---
 
@@ -9,12 +9,12 @@ output: html_document
 library(tidyverse)
 library(stringr)
 knitr::opts_chunk$set(
-  echo = FALSE, warning = F, out.width = "75%", error = F, message = F)
+  echo = FALSE, warning = F,  error = F, message = F,
+  fig.align = "center", fig.width = 9, fig.height = 5)
 ```
 
-## UC Strike Action Vote: Oct 26-Nov 1  
 
-UC students are voting on whether they want to strike this week. The strike is driven by many years running of incremental bargaining for improved cost of living and rights for all types of student-related UC employment, from junior specialists and GSRs, to TAs and post-docs. The main point of the strike that interests me is the [proposed cost of living adjustments)](https://www.fairucnow.org/cola/). I can attest to the general sentiment that graduate students feel over-worked, underpaid, and constantly battling administrative and bureaucratic hurdles to ensure their employment every 12 weeks. But at the same time, the UC bargaining team has proposed a pretty radical number for fair wages for all 'Grad Workers' (GSRs and TAs): $54,000 as a minimum salary, assuming that graduate students are working 50% year-round. 
+UC students are voting on whether they want to strike this week. The strike is driven by many years running of incremental bargaining for improved cost of living and rights for all types of student-related UC employment, from junior specialists and GSRs, to TAs and post-docs. The main point of the strike that interests me is the [proposed cost of living adjustments](https://www.fairucnow.org/cola/). I can attest to the general sentiment that graduate students feel over-worked, underpaid, and constantly battling administrative and bureaucratic hurdles to ensure their employment every 12 weeks. But at the same time, the UC bargaining team has proposed a pretty radical number for fair wages for all 'Grad Workers' (GSRs and TAs): $54,000 as a minimum salary, assuming that graduate students are working 50% year-round. 
 
 The Union's proposal of $54,000 for 50% sounds high, and it is. But my first questions are about trying to understand how high this really is, relative to student salaries, and how this compared to other graduate student salaries.  
 
@@ -160,14 +160,14 @@ div.white { background-color:#FFFFFF; border-radius: 5px; padding: 20px;}
 <div class = "color">
 <div class = "row">
 <div class = "col-md-4">
-**UC lags behind graduate programs across the country and needs to take considerable action to step up.**  
+<center>**UC lags behind graduate programs across the country and needs to take considerable action to step up.**</center>
 </div>
 </div>
 </div>
 
 ## How do Union demands map onto to national grad pay norms?  
 
-**The UC's current proposal** -- which has been rejected by the Union -- is for a 7% raise increase. This kind of raise would bring the minimum from \$28,622 to \$30,625.54. This might sound exciting, but let's note that 3% of that is a standard inflation increase and the remaining 4% still does not cover the rate of inflation that we've endured in 2022. And in the context of living wages, this still leaves Davis far below average compared to its peers, with minimum workers earning only .75 of the living wage.  
+**The UC's current proposal** -- which has been rejected by the Union -- is for a 7% raise increase. This kind of raise would bring the minimum from \$28,622 to \$30,625.54. It is also important to note that 3% of that is a standard inflation increase and the remaining 4% still does not cover the rate of inflation that we've endured in 2022. In the context of living wages, this still leaves UC Davis far below average compared to its peers, with **minimum-pay grad students still earning only .75 of the living wage**.  
 
 ```{r, results = F}
 ucd_current_pay <- df$min_annual_50FTE[df$university == "University of California, Davis"]
@@ -175,41 +175,7 @@ davis_living_wage <- df$living_wage_income[df$university == "University of Calif
 (ucd_current_pay + (ucd_current_pay*.07))/davis_living_wage
 ```
 
-Instead, **UAW's proposal** is to set an ambitious new minimum of $54,000 at 50% FTE. 
-```{r}
-54000/ucd_current_pay
-```
-
-```{r}
-uc_campus_livingwage <- data.frame(
- "campus" = c("Berkeley", "Santa Barbara", "Los Angeles", "San Diego",
-  "Riverside", "Merced", "Irvine", "Santa Cruz", "Davis"),
- living_wage = c(53149, 52675, 45536, 47304,
-  38821, 34219, 51843, 54571, 40930)
-# Berkeley is SF/Oakland area
-)
-uc_campus_livingwage$living_wage_88 = uc_campus_livingwage$living_wage*88
-```
-
-I think what is competitive is 88% of living wage
-
-```{r}
-
-```
-
-
-```{r}
-summary(uc_campus_livingwage$living_wage)
-```
-
-
-```{r}
-DT::datatable(uc_campus_livingwage)
-```
-
-```{r}
-summary(uc_campus_livingwage$living_wage_88)
-```
+Instead, **UAW's proposal** sets an ambitious new minimum of $54,000 at 50% FTE. In terms of a living wage in Davis, this is a 88.6% rate of increase, 1.39 times the living wage in Davis. Compared to other universities, it looks like a massive ask:  
 
 ```{r}
 df <- df %>%
@@ -231,13 +197,56 @@ df <- df %>%
 
 ```{r}
 boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
-                 "Minimum graduate student annual pay*")
+                 "Proposed: 90% of median living wage across UC campuses compared to universities*")
 ```
+
+Though as I've mentioned, different UC campuses have different costs of living, listed below:  
+```{r, results = F}
+raise <- 54000/ucd_current_pay-1
+(ucd_current_pay + (ucd_current_pay*raise))/davis_living_wage
+```
+
+```{r}
+uc_campus_livingwage <- data.frame(
+ "campus" = c("Berkeley", "Santa Barbara", "Los Angeles", "San Diego",
+  "Riverside", "Merced", "Irvine", "Santa Cruz", "Davis"),
+ living_wage = c(53149, 52675, 45536, 47304,
+  38821, 34219, 51843, 54571, 40930)
+# Berkeley is SF/Oakland area
+) %>% 
+  mutate(
+    living_wage_88 = living_wage*.88) %>% 
+  mutate(living_wage_dollar = paste('$',formatC(living_wage, big.mark=',', 
+                                                     format = 'f', drop0trailing = T)),
+         living_wage_88_dollar = paste('$',formatC(living_wage_88, big.mark=',', 
+                                                     format = 'f', drop0trailing = T)),
+  )
+
+uc_campus_wageDT <- uc_campus_livingwage %>% 
+  select(campus, living_wage_dollar) %>% 
+  rename("UC Campus" = campus,
+         "Living wage" = living_wage_dollar)
+```
+
+```{r}
+DT::datatable(uc_campus_wageDT)
+```
+
+So of course the relationship to living wage differs. At UC's highest-cost campus, Santa Cruz, this minimum is right around the living wage. But **based on data from comparable universities, it seems like 90%  of a city's living wage is a competitive ask**. So what does that more realistic ask -- 90% of living wage based on the median living wage across UC campuses -- look like?  
+
+```{r, results = F}
+summary(uc_campus_livingwage$living_wage)
+summary(uc_campus_livingwage$living_wage_88)
+41628/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Davis"])
+41628/(uc_campus_livingwage$living_wage[uc_campus_livingwage$campus == "Santa Cruz"])
+```
+
+The values from across MIT's Living Wage Calculator estimates that the median cost of living across the 9 campuses is \$47,304, and 88% of that is \$41,628. How does this value then map onto our cross-university comparison, for UC Davis? This puts UCD in a very competitive situation at right about the living wage, but leaves somewhere like Santa Cruz still around the average pay rate relative to living wage, right around .76 of living wage.  
 
 ```{r}
 df <- df %>%
   mutate(min_annual_50FTE = case_when(
-    university == "University of California, Davis" ~ 41000,
+    university == "University of California, Davis" ~ 41628,
     T ~ min_annual_50FTE),
         min_annual_100FTE = min_annual_50FTE*2) %>% 
   mutate(min_annual_100FTE = round(min_annual_100FTE),
@@ -254,17 +263,26 @@ df <- df %>%
 
 ```{r}
 boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage, 
-                 "Minimum graduate student annual pay*")
+                 "Re-analysis: .88 of median living wage across UC campuses compared to universities*")
 ```
 
-What does this shake out to, as a percentage riase?
+## Re-anlalysis in the context of barganing  
 
-```{r}
-41000/ucd_current_pay
+So, here's my take: UC proposes as 7% raise, UAW is asking for an 88% raise, and my data is pointing to a more realistic/competitive ask of 45% raise. And well, if bargaining works where folks end up meeting in the middle, then we'd land right about at the 40% raise mark, which feels like a competitive win. So my take is that the strike should not be about getting to \$54,000, but rather, starting high in response to UC starting very, very low, and using that to land on a reasonable middle ground.   
+
+<div class = "color">
+<div class = "row">
+<div class = "col-md-4">
+<center>tl;dr I will strike to increase bargaining power in the hopes that we can agree to a reasonable middle-ground, making the UC a system with competitive university pay. If we agree to a fixed value across the UC, Davis will benefit more than others, and places like Santa Cruz will still be on the tail end of pay to living wage spectrum.</center>
+</div>
+</div>
+</div>
+
+```{r, results = F}
+41628/ucd_current_pay
 ```
-Right smack in the middle of our bargain: UC offers 7%, we propose 88% and well, we're right at a long overdue 40% raise.
 
-
+<!----
 # Where should this money come from?  
 
 We don't know, but we do know that other schools make graduate students more a priority. * This is not simply because they have more money. Comparable students, revenue
@@ -275,3 +293,4 @@ How much does a grad student make compared to their chancellor...
 ```
 
 How much does a grad student make compared to their faculty?
+---->
