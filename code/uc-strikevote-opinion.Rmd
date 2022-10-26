@@ -230,7 +230,7 @@ uc_campus_wageDT <- uc_campus_livingwage %>%
          "Living wage" = living_wage_dollar)
 ```
 
-```{r}
+```{r, ech = T, results = T, message = T}
 DT::datatable(uc_campus_wageDT)
 ```
 
@@ -269,7 +269,7 @@ boxPlot_perc_function(grad50FTE_to_living_wage, grad100FTE_to_living_wage,
                  "Re-analysis: .90 of median living wage across UC campuses compared to universities*")
 ```
 
-## Re-anlalysis in the context of barganing  
+## Re-analysis in the context of barganing  
 
 So, here's my take: UC proposes as 7% raise, UAW is asking for an 88% raise, and my data is pointing to a more realistic/competitive ask of 45% raise. And well, if bargaining works where folks end up meeting in the middle, then we'd land right about at the 40% raise mark, which feels like a competitive win. So my take is that the strike should not be about getting to \$54,000, but rather, starting high in response to UC starting very, very low, and using that to land on a reasonable middle ground.   
 
