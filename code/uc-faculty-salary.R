@@ -98,6 +98,8 @@ df <- rbind(fydf, aydf) %>%
   filter(!(Regular.pay < 68100)) %>% 
   select(-Overtime.pay)
 
+write.csv(df, "data/uc-wide-salaries.csv", row.names = F)
+
 # UCOP pay scale ---- 
 ## General: https://ap.ucsb.edu/compensation.and.benefits/ucsb.salary.scales/1.pdf
 # #Business, econ, engineering: https://ap.ucsb.edu/compensation.and.benefits/ucsb.salary.scales/3.pdf
@@ -110,6 +112,7 @@ scalepay <- data.frame(
   "level" = level,
   "scalepay" = dollars
 )
+write.csv(scalepay, "data/ucop_ladder.csv", row.names = F)
 
 # Numeric comparison of pay scales ----
 proposed <- scalepay %>% 

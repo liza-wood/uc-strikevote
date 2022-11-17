@@ -274,4 +274,15 @@ um_pay <- rbind(pay_saes_p1, pay_saes_pages,
   mutate(Name = str_squish(Name)) %>% 
   filter(!str_detect(Name, "Page: \\d of 4?5? 1 2 3 4\\s?5?"))
 
+temp_df <- um_pay %>% 
+  filter(year == 2021) %>% 
+  mutate(Title = toupper(Title)) %>% 
+  filter(str_detect(Title, 'PROFESSOR')) %>% 
+  filter(!(str_detect(Title, ("CLINICAL|ADJUNCT|RESEARCH|EMERITUS")))) %>% 
+  mutate(Title = tools::toTitleCase(tolower(Title))) %>% 
+  mutate(rank = ifelse(str_detect(Title, 'Asst Prof'), "Assistant",
+                       ifelse(str_detect(Title, 'Assoc Prof'), "Associate",
+                              'Full')))
+
+write.csv(temp_df, "data/um-salaries.csv", row.names = F)         
          
