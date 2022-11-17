@@ -48,3 +48,5 @@ df <- df %>%
          Benefits = as.numeric(str_remove_all(Benefits,  "\\$|,")),
          Total.pay = as.numeric(str_remove_all(Total.pay, "\\$|,"))) %>% 
   select(-Overtime.pay)
+
+write.csv(df, "data/uc-provost-salaries.csv", row.names = F)
