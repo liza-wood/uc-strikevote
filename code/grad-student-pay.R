@@ -1,13 +1,20 @@
 # This script compiles data from different university webpages to create a grad student pay spreadsheet.
 
 library(tidyverse)
-# CALIFORNIA ----
+# CALIFORNIA, DAVIS ----
 ## Data source ----
+# Davis
 # GA/TA/postdoc: https://ucdavis.app.box.com/v/salaryscale2122
 # Notes: Reported monthly at 100% FTE; postdoc minimum
+# Santa Barbara
+# TA: https://ap.ucsb.edu/compensation.and.benefits/ucsb.salary.scales/18.pdf
+# GSR: https://ap.ucsb.edu/compensation.and.benefits/ucsb.salary.scales/22.pdf
+# LA
+# GA/TA: https://grad.ucla.edu/gss/appm/aaprate.pdf
+## Based on these 3 campuses I assume these values are UC-wide
 
 ## Populating data ----
-uni <- "University of California, Davis"
+uni <- "University of California"
 fall_year <- 2021
 ta <- 5156.89 # annual pay estimated for a 9 months period
 gsr1 <-3667.58
@@ -29,6 +36,7 @@ payscale_ucd <- data.frame(
   "GSR_candidate" = gsr5,
   "postdoc" = postdoc
 )
+
 
 # WASHINGTON ----
 ## Data source ----

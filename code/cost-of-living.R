@@ -30,11 +30,15 @@ census <- read.csv("data/uscb.csv") %>%
 # https://livingwage.mit.edu/
 
 lwc <- data.frame(
-  University = c("University of California, Davis",  "University of Michigan",  # Could only ID Yolo county
+  University = c("University of California, Davis",  
+                 "University of California, Santa Barbara",
+                 "University of California, Los Angeles",
+                 "University of Michigan",  # Could only ID Yolo county
                  "Arizona State University" , # Phoenix area
                  "University of Florida", "University of Washington",
                  "University of Georgia", "University of Indiana"),
-  code = c("counties/06113", "metros/11460", "metros/38060", 
+  code = c("counties/06113", "metros/42200", "metros/31080",
+           "metros/11460", "metros/38060", 
            "metros/23540", "metros/42660", "metros/12020", "metros/14020"))
 ## Data ----
 cost_of_living <- data.frame()
@@ -60,6 +64,6 @@ for(i in 1:nrow(lwc)){
 costs <- full_join(census, cost_of_living) %>% 
   mutate(city = c("Ann Arbor, MI", "Tempe, AZ", "Bloomington, IN",
                   "Gainseville, FL", "Seattle, WA", "Davis, CA", 
-                  "Athens, GA"))
+                  "Athens, GA", "Santa Barbara, CA", "Los Angeles, CA"))
 
 write.csv(costs, "data/cost_of_living.csv", row.names = F)

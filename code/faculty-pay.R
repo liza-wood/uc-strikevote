@@ -2,6 +2,7 @@ library(rvest)
 library(xml2)
 library(dplyr)
 library(stringr)
+library(tidyr)
 
 # UCD----
 ## Faculty listing ----
@@ -123,6 +124,17 @@ faculty_pay <- faculty_pay %>%
          increase19 = pay19/pay18, 
          increase20 = pay20/pay19,
          increase21 = pay21/pay20)
+
+tempdf <- salarydf %>% 
+  filter(Year == 2021) %>% 
+  mutate(name_first = toupper(word(Name, 1)), 
+         name_last = toupper(word(Name, -1))) %>% 
+  mutate(name_last = ifelse(name_last == "URRUTIA", "VALDOVINOS", name_last)) %>% 
+  mutate(title = ifelse(str_detect(Job.title, 'Asst Prof'), "Assistant",
+                        ifelse(str_detect(Job.title, 'Assoc Prof'), "Associate",
+                               'Full'))) %>% 
+  select(name_last, title, Regular.pay, Total.pay)
+write.csv(tempdf, 'data/esp21_pay.csv', row.names = F)
 
 cols <- which(colnames(faculty_pay) %in% c("increase12","increase21"))
 faculty_pay$average_raise_11to21 = rowMeans(faculty_pay[,cols[1]:cols[2]], na.rm = T)
