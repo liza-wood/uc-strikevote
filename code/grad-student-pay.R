@@ -99,7 +99,7 @@ payscale_uf <- data.frame(
 
 ## Populating data ----
 # Notes: Converting to represent 100% monthly pay
-uni <- "University of Michigan"
+uni <- "University of Michigan, Ann Arbor"
 fall_year <- 2022
 ## All the same, reported in 4 month increments
 ta_premaster <- 24055/4
@@ -151,7 +151,7 @@ payscale_uga <- data.frame(
 
 ## Populating data ----
 # Notes: Converting to represent 100% monthly pay
-uni <- "University of Indiana"
+uni <- "Indiana University, Bloomington"
 fall_year <- 2022
 ta_premaster <- NA
 ta_candidate <- NA

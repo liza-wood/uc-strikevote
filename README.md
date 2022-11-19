@@ -1,6 +1,6 @@
 # UC Strike Action: Digging into the data  
 
-A repository for probing questions around graduate student pay in and beyond the University of California.  
+A repository for digging in to questions around graduate student pay in and beyond the University of California.  
 
 Read a summary of the findings here:  
 * [Comparison of grad student pay across the country](https://bit.ly/3TEZ2Jd)  
