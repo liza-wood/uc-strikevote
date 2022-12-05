@@ -419,17 +419,17 @@ Data for this app were taken from Google sheets shared by the UC Bargaining Team
 * [ASE (Teaching Assistant) spreadsheet](https://docs.google.com/spreadsheets/d/1uDKy5bVJ785XHanbRuW22U_9XjkOxPg5NIVxTbenLus/edit#gid=970994158)  
 * [SRU (GSR) spreadsheet](https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=143970143)  
 
-Row {data-height=300}
+Row {data-height=400}
 -------------------------------------
-### Assumptions:  
-A number of assumptions were made in the development of this interactive app.  
+### Assumptions and challenges:  
 
 1. I currently don't allow for a selection of FTE appointment rate, and instead assume all appointments are at 50%.  
 2. I assume that anyone not working over the summer applied for the hardship fund that appears to be available in this proposal, for which I assign that $1000 across the three summer months.  
 3. From the spreadsheets above, it appears as if Steps 1-4 are being collapsed and Steps 9-10 are being collapsed. This is what I model in my proposed pay adjustments.  
-4. An omission: I am not quite sure where Fellows fit in to this, so for now I am keeping with the TA/GSR language rather than ASE/SRU.  
+4. I have not been able to include the experience-based increases as well as I would like -- I am working on it. In theory we should have increases right when we pass over an experience threshold, which is not reflected here.  
+5. An omission: I am not quite sure where Fellows fit in to this, so for now I am keeping with the TA/GSR language rather than ASE/SRU.  
 
-Row {data-height=300}
+Row {data-height=200}
 -------------------------------------
 ### Contact:
 
