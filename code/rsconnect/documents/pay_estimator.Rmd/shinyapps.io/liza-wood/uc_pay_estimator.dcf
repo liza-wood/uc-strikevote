@@ -1,0 +1,13 @@
+name: uc_pay_estimator
+title: uc_pay_estimator
+username:
+account: liza-wood
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7813701
+bundleId: 6592398
+url: https://liza-wood.shinyapps.io/uc_pay_estimator/
+when: 1670226774.90134
+lastSyncTime: 1670226774.90135
+asMultiple: FALSE
+asStatic: FALSE

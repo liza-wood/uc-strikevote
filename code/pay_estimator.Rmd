@@ -1,0 +1,439 @@
+---
+title: "<b>What will I earn? An interactive tool for UC grad students to figure out bargaining scenarios</b>"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    navbar: 
+      - icon: fa-github fa-lg
+        href: http://github.com/liza-wood
+    source_code: embed
+    theme: 
+      version: 4
+      bg: "#D3D3D3" 
+      fg: "#000000" 
+      primary: "#8B0000"
+      navbar-bg: "#8B0000"
+    
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+library(gsheet)
+library(stringr)
+library(tidyverse)
+library(flexdashboard)
+
+ase <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1uDKy5bVJ785XHanbRuW22U_9XjkOxPg5NIVxTbenLus/edit#gid=970994158")
+gsr1_4 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=1978421261")
+gsr5 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=590276086")
+gsr6 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=1793117733")
+gsr7 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=564163227")
+gsr8 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=719917995")
+gsr9_10 <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=143970143")
+
+current_pay <- data.frame(
+  "time" = rep("current", 30),
+  "step" = rep(1:10, each = 3),
+  "yrs_exp_gsr" = rep(c("0-3", "4-6", "7+"), 10),
+  "yrs_exp_ta" = rep(c("0-3", "4-6", "7+"), 10),
+  "gsr" = rep(c(3667.58, 3952.92, 4383.67, 4734.83, 5049.92 ,
+            5384.33, 5707.67, 6161.75, 6656.08, 7186.58)/2, each = 3),
+  "ta" = rep(5156.89/2, 30))
+
+current_pay2324 <- current_pay %>% 
+  mutate(gsr = gsr,#+(gsr*.02),
+         ta = ta,#+(ta*.02),
+         time = "2324")
+#current_pay2425 <- current_pay2324 %>% 
+#  mutate(gsr = gsr+(gsr*.02),
+#         ta = ta+(ta*.02),
+#         time = "2425")
+
+current_pay <- rbind(current_pay, current_pay2324)
+
+proposed_pay <- data.frame(
+  "time" = rep("current", 30),
+  "step" = rep(1:10, each = 3),
+  "yrs_exp_gsr" = rep(c("0-3", "4-6", "7+"), 10),
+  "yrs_exp_ta" = rep(c("0-3", "4-6", "7+"), 10),
+  "gsr" = as.numeric(trimws(str_remove_all(c(rep(gsr1_4[13,2], 4*3), 
+            rep(c(gsr5[13,2], gsr6[13,2], gsr7[13,2], gsr8[13,2]), each = 3),
+            rep(gsr9_10[13,2], 2*3)), "\\$|,"))),
+  "ta" = as.numeric(trimws(str_remove_all(ase[4,2], "\\$|,"))))
+
+proposed_pay2324 <- data.frame(
+  "time" = rep("2324", 30),
+  "step" = rep(1:10, each = 3),
+  "yrs_exp_gsr" = rep(c("0-3", "4-6", "7+"), 10),
+  "yrs_exp_ta" = rep(c("0-3", "4-6", "7+"), 10),
+  "gsr" = as.numeric(trimws(str_remove_all(c(rep(c(gsr1_4[14,2], gsr1_4[14,3],gsr1_4[14,4]), 4), 
+            c(gsr5[14,2], gsr5[14,3], gsr5[14,4], 
+              gsr6[14,2], gsr6[14,3], gsr6[14,4], 
+              gsr7[14,2], gsr7[14,3], gsr7[14,4], 
+              gsr8[14,2], gsr8[14,3], gsr8[14,4]),
+            rep(c(gsr9_10[14,2],gsr9_10[14,3],gsr9_10[14,4]), 2)), "\\$|,"))),
+  "ta" = as.numeric(trimws(str_remove_all(c(ase[5,2],ase[5,3],ase[5,4]), "\\$|,"))))
+
+#proposed_pay2425 <- data.frame(
+#  "time" = rep("2425", 30),
+#  "step" = rep(1:10, each = 3),
+#  "yrs_exp_gsr" = rep(1:3, 10),
+#  "yrs_exp_ta" = rep(1:3, 10),
+#  "gsr" = as.numeric(trimws(str_remove_all(c(rep(c(gsr1_4[16,2], gsr1_4[16,3],gsr1_4[16,4]), 4), 
+#            c(gsr5[16,2], gsr5[16,3], gsr5[16,4], 
+#              gsr6[16,2], gsr6[16,3], gsr6[16,4], 
+#              gsr7[16,2], gsr7[16,3], gsr7[16,4], 
+#              gsr8[16,2], gsr8[16,3], gsr8[16,4]),
+#            rep(c(gsr9_10[16,2],gsr9_10[16,3],gsr9_10[16,4]), 2)), "\\$|,"))),
+#  "ta" = as.numeric(trimws(str_remove_all(c(ase[6,2],ase[6,3],ase[6,4]), "\\$|,"))))
+
+proposed_pay <- rbind(proposed_pay, proposed_pay2324)
+```
+
+
+Column {.sidebar}
+=============================================
+
+Adjust the following scenarios for your upcoming employment plans. 
+
+<font size="2em">
+What kinds of employment will you have each quarter?  
+
+```{r}
+selectInput('spring', 'Spring 2023:', c("TA", "GSR", "None"), selected= "GSR")
+selectInput('summer', 'Summer 2023:', c("TA", "GSR", "None"), selected= "GSR")
+selectInput('fall', 'Fall 2023:', c("TA", "GSR", "None"), selected= "TA")
+selectInput('winter', 'Winter 2024:', c("TA", "GSR", "None"), selected= "GSR")
+```
+
+If GSR, what step do you expect to be hired at? 
+```{r}
+numericInput('step', '', 3,
+              min = 1, max = 10)
+```
+
+How many quarters of experience do you have?
+
+```{r}
+selectInput('yrs_exp_gsr', 'GSR:', c("0-3", "4-6", "7+"), selected= "1")
+selectInput('yrs_exp_ta', 'TA:', c("0-3", "4-6", "7+"), selected= "1")
+```
+</font>
+
+Calculator 
+=======================================================================
+
+Row {data-height=100}
+-------------------------------------
+
+### 
+<font size="4em" color="#5A5A5A">
+```{r, echo=FALSE}
+textOutput("text")
+```
+</font>
+```{r, context="server"}
+output$text <- renderText({
+  current_df <- input_current_data(input)
+  paste("Current annual gross: $ ",round(sum(current_df$pay))) })
+```
+
+### 
+<font size="4em" color="#152388">
+```{r, echo=FALSE}
+textOutput("text2")
+```
+</font>
+```{r, context="server"}
+output$text2 <- renderText({
+  proposed_df <- input_proposed_data(input)
+  paste("Proposed annual gross: $ ",round(sum(proposed_df$pay))) })
+```
+
+### 
+<font size="4em" color="#8B0000">
+```{r, echo=FALSE}
+textOutput("text3")
+```
+</font>
+```{r, context="server"}
+output$text3 <- renderText({
+  proposed_df <- input_proposed_data(input)
+  current_df <- input_current_data(input)
+  paste("Annual pay difference:
+        $ ", round(sum(proposed_df$pay)) - round(sum(current_df$pay))) })
+```
+
+### 
+<font size="4em" color="#023020">
+```{r, echo=FALSE}
+textOutput("text4")
+```
+</font>
+```{r, context="server"}
+output$text4 <- renderText({
+  proposed_df <- input_proposed_data(input)
+  current_df <- input_current_data(input)
+  paste("Raise:", 
+        100*(round(sum(proposed_df$pay)/sum(current_df$pay), 2)-1), "%") })
+```
+
+Row 
+-------------------------------------
+### 
+
+```{r current pay data}
+input_current_data <- function(input){
+  if(input$spring == "TA"){
+    spring <- current_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "current",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$spring == "GSR"){
+    spring <- current_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "current",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {spring <- 0}
+
+
+  if(input$summer == "TA"){
+    summer <- current_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "current",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$summer == "GSR"){
+    summer <- current_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "current",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {summer <- 0}
+
+  if(input$fall == "TA"){
+    fall <- current_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "2324",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$fall == "GSR"){
+    fall <- current_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "2324",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {fall <- 0}
+
+  if(input$winter == "TA"){
+    winter <- current_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "2324",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$winter == "GSR"){
+    winter <- current_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "2324",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {winter <- 0}
+
+current_df <- data.frame(
+  "date" = lubridate::mdy(c("04/01/23", "05/01/23","06/01/23","07/01/23","08/01/23",
+                            "09/01/23","10/01/23","11/01/23", "12/01/23", "01/01/24",
+                            "02/01/24", "03/01/24")),
+  "pay" = rep(c(round(spring[[1]]), round(summer[[1]]), 
+                round(fall[[1]]),round(winter[[1]])), each = 3))
+return(current_df)
+}
+
+```
+
+```{r current pay plot}
+renderPlot({
+  current_df <- input_current_data(input)
+ p <- ggplot(current_df, aes(x = date, y = pay, label = paste0("$", pay))) +
+    geom_line(color = "#D3D3D3") +
+    geom_point() +
+    geom_text(vjust = -1) +
+    ylim(c(0,4200)) +
+    theme_minimal() +
+    theme_strike() +
+   labs(title = "Current UC pay scale", y = "Gross monthly pay ($)", x = "",
+        caption = "Note: These pay scale data remain unchanged from the 2021-22 academic year")
+
+ print(p)
+})
+```
+
+Row 
+-------------------------------------
+###
+
+
+```{r proposed pay data}
+input_proposed_data <- function(input){
+  if(input$spring == "TA"){
+    springp <- proposed_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "current",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$spring == "GSR"){
+    springp <- proposed_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "current",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {springp <- 0}
+
+  if(input$summer == "TA"){
+    summerp <- proposed_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "current",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$summer == "GSR"){
+    summerp <- proposed_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "current",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {summerp <- 333}
+
+  if(input$fall == "TA"){
+    fallp <- proposed_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "2324",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$fall == "GSR"){
+    fallp <- proposed_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "2324",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {fallp <- 0}
+
+  if(input$winter == "TA"){
+    winterp <- proposed_pay %>% 
+      select(-c(gsr, yrs_exp_gsr, step)) %>% 
+      filter(time == "2324",
+             yrs_exp_ta == input$yrs_exp_ta) %>% 
+      unique() %>% 
+      select(ta)
+  } else if(input$winter == "GSR"){
+    winterp <- proposed_pay %>% 
+      select(-c(ta, yrs_exp_ta)) %>% 
+      filter(time == "2324",
+             step == input$step,
+             yrs_exp_gsr == input$yrs_exp_gsr) %>% 
+      unique() %>% 
+      select(gsr)
+  } else {winterp <- 0}
+
+proposed_df <- data.frame(
+  "date" = lubridate::mdy(c("04/01/23", "05/01/23","06/01/23","07/01/23","08/01/23",
+                            "09/01/23","10/01/23","11/01/23", "12/01/23", "01/01/24",
+                            "02/01/24", "03/01/24")),
+  "pay" = rep(c(springp[[1]], summerp[[1]], fallp[[1]], winterp[[1]]), each = 3))
+return(proposed_df)
+}
+
+```
+
+
+```{r proposed pay plot}
+renderPlot({
+  proposed_df <- input_proposed_data(input)
+  p <- ggplot(proposed_df, aes(x = date, y = pay, label = paste0("$", pay))) +
+    geom_line(color = "#D3D3D3") +
+    geom_point() +
+    geom_text(vjust = -1) +
+    ylim(c(0,4200)) +
+    theme_minimal() +
+    theme_strike() +
+   labs(title = "Pay scale proposed by the UC's Dec 2. offer", y = "Gross monthly pay ($)", x = "")
+  print(p)
+})
+```
+
+```{r}
+theme_strike <- function(base_size = 18, 
+                            dark_text = "#1A242F") {
+  
+  mid_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[2]
+  light_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[3]
+  
+  theme_minimal(base_size = base_size) +
+    theme(text = element_text(colour = mid_text, family = "Arial", lineheight = 1.1),
+          plot.title = element_text(colour = dark_text, family = "Arial", 
+                                    size = rel(1.25), margin = margin(12, 0, 8, 0)),
+          plot.subtitle = element_text(size = rel(1), margin = margin(0, 0, 0, 0)),
+          axis.text.y = element_text(colour = light_text, size = rel(0.9)),
+          axis.title.y = element_text(size = rel(0.9), margin = margin(0, 4, 0, 0)),
+          axis.text.x = element_text(colour = mid_text, size = rel(.9)),
+          #axis.title.x = element_blank(),
+          legend.position = "bottom",
+          #legend.justification = 1,
+          legend.text = element_text(size = rel(.75), margin = margin(0, 0, 0, 0)),
+          panel.grid = element_line(colour = "#F3F4F5"),
+          plot.caption = element_text(size = rel(0.65), margin = margin(8, 0, 0, 0)),
+          plot.margin = margin(0.5, 0.5, 0.5, 0.5,"cm"))
+}
+```
+
+Information  
+=======================================================================
+
+Row {data-height=200}
+-------------------------------------
+### Data:
+
+Data for this app were taken from Google sheets shared by the UC Bargaining Team.  
+
+* [ASE (Teaching Assistant) spreadsheet](https://docs.google.com/spreadsheets/d/1uDKy5bVJ785XHanbRuW22U_9XjkOxPg5NIVxTbenLus/edit#gid=970994158)  
+* [SRU (GSR) spreadsheet](https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=143970143)  
+
+Row {data-height=300}
+-------------------------------------
+### Assumptions:  
+A number of assumptions were made in the development of this interactive app.  
+
+1. I currently don't allow for a selection of FTE appointment rate, and instead assume all appointments are at 50%.  
+2. I assume that anyone not working over the summer applied for the hardship fund that appears to be available in this proposal, for which I assign that $1000 across the three summer months.  
+3. From the spreadsheets above, it appears as if Steps 1-4 are being collapsed and Steps 9-10 are being collapsed. This is what I model in my proposed pay adjustments.  
+4. An omission: I am not quite sure where Fellows fit in to this, so for now I am keeping with the TA/GSR language rather than ASE/SRU.  
+
+Row {data-height=300}
+-------------------------------------
+### Contact:
+
+If I'm missing something, please let me know:  
+belwood[at]ucdavis.edu  
+
+
