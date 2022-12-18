@@ -601,11 +601,12 @@ theme_strike <- function(base_size = 18,
 Information  
 =======================================================================
 
-Row {data-height=300}
+Row {data-height=450}
 -------------------------------------
 ### Data:
 
-Data for the December 2 proposals were taken from Google sheets shared by the UC Bargaining Team.  
+Data for the December 2 proposals were taken from Google sheets shared by the UC Bargaining Team.   
+
 * [ASE (Teaching Assistant) spreadsheet (Dec 2)](https://docs.google.com/spreadsheets/d/1uDKy5bVJ785XHanbRuW22U_9XjkOxPg5NIVxTbenLus/edit#gid=970994158)  
 * [SRU (GSR) spreadsheet (Dec 2)](https://docs.google.com/spreadsheets/d/1s5c3epn1TOlBz1HzDglZVdpK1DQJj3aLsO3goKMIdDA/edit#gid=143970143)   
 
@@ -615,16 +616,18 @@ Data for the December 16 proposals were taken from the Bargaining Team's [writte
 * [SRU (GSR) spreadsheet (Dec 16)](https://docs.google.com/spreadsheets/d/1Wt9JTEpduB0RMHHy-guL07kSh7DgHKqrXysSTuZfTaY/edit#gid=959049112)
 
 
-Row {data-height=300}
+Row {data-height=350}
 -------------------------------------
 ### Assumptions and challenges:  
+
 
 1. I currently don't allow for a selection of FTE appointment rate, and instead assume all appointments are at 50%.  
 2. I assume that anyone not working over the summer applied for the hardship fund that appears to be available in this proposal, for which I assign that $1000 across the three summer months.  
 3. Note that Steps 1-4 are being collapsed and Steps 9-10 are being collapsed in both proposals. Furthermore, experience based increases are only relevant up until Step 6, after which experiencebased increases don't apply.    
 4. I have not been able to include the experience-based increases as well as I would like -- I am working on it. In theory we should have increases right when we pass over an experience threshold, which is not reflected here.  
 
-Row {data-height=100}
+
+Row {data-height=200}
 -------------------------------------
 ### Contact:
 
