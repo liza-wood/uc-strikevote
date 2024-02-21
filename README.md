@@ -3,9 +3,9 @@
 A repository for digging in to questions around graduate student pay in and beyond the University of California.  
 
 Read a summary of the findings here:  
-* [Comparison of grad student pay across the country](https://bit.ly/3TEZ2Jd)  
-* [An analysis of grad student pay relative to UC faculty](http://bit.ly/3Gn7A3u)  
-* [DRAFT: Response to Provost Michael Brown's letter to UC faculty](https://liza-wood.github.io/response-to-provost-brown.html)  
+* [Comparison of grad student pay across the country](https://liza-wood.github.io/posts/uc_strikevote_opinion.html)  
+* [An analysis of grad student pay relative to UC faculty](https://liza-wood.github.io/posts/uc_strikepay_opinion.html)  
+* [Response to Provost Michael Brown's letter to UC faculty](https://liza-wood.github.io/posts/response_to_provost_brown.html)  
 * [Pay estimator using updated bargaining scenarios](https://liza-wood.shinyapps.io/uc_pay_estimator/)  
 
 
